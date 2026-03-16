@@ -65,6 +65,7 @@ interface AppStore {
 // ============================================================
 
 const DEFAULT_SETTINGS: AppSettings = {
+  disabledCards: [],
   cathayLevel: 'L2',
   taishinLevel: 'L2',
   sinopacLevel: '大戶Plus',

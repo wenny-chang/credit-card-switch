@@ -5,6 +5,7 @@ import { X, Check } from 'lucide-react'
 import { addTransaction } from '@/lib/db'
 import type { CategoryId, CardId, Transaction } from '@/types'
 import { CARD_NAMES, CARD_COLORS } from '@/data/cards'
+import { useAppStore } from '@/store/useAppStore'
 
 const CATEGORIES: { id: CategoryId; label: string }[] = [
   { id: 'dining', label: '餐飲' },
@@ -52,6 +53,11 @@ export default function AddTransactionModal({
   onClose,
   onSaved,
 }: Props) {
+  const { settings } = useAppStore()
+  const enabledCardIds = CARD_IDS.filter(
+    (id) => !(settings.disabledCards ?? []).includes(id)
+  )
+
   const [merchant, setMerchant] = useState(initialMerchant)
   const [category, setCategory] = useState<CategoryId>(initialCategory)
   const [amount, setAmount] = useState(initialAmount > 0 ? String(initialAmount) : '')
@@ -183,7 +189,7 @@ export default function AddTransactionModal({
               使用卡片
             </label>
             <div className="flex gap-2 mt-2 overflow-x-auto scrollbar-hide pb-1">
-              {CARD_IDS.map((id) => (
+              {enabledCardIds.map((id) => (
                 <button
                   key={id}
                   onClick={() => setCardId(id)}

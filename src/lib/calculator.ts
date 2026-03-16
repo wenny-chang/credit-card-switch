@@ -218,13 +218,15 @@ function calcCtbc(input: CalcInput): CardRewardResult {
 export function calculateRewards(input: CalcInput): CardRewardResult[] {
   if (!input.amount || input.amount <= 0) return []
 
+  const disabled = input.settings.disabledCards ?? []
+
   const results: CardRewardResult[] = [
     calcCathay(input),
     calcTaishin(input),
     calcEsun(input),
     calcSinopac(input),
     calcCtbc(input),
-  ]
+  ].filter((r) => !disabled.includes(r.cardId))
 
   // 依現金等值回饋降序排列
   return results.sort((a, b) => b.rewardCash - a.rewardCash)

@@ -47,7 +47,7 @@ function SelectSheet<T extends string>({
             <X size={16} className="text-gray-500" />
           </button>
         </div>
-        <div className="px-5 py-3 pb-12 space-y-2">
+        <div className="px-5 py-3 pb-24 space-y-2">
           {options.map((opt) => {
             const isCurrent = opt.value === current
             return (
@@ -208,6 +208,52 @@ export default function SettingsPage() {
       </div>
 
       <div className="px-5 space-y-6 pb-8">
+
+
+        {/* 啟用卡片 */}
+        <div>
+          <div className="text-sm font-semibold text-gray-700 mb-2">啟用卡片</div>
+          <div className="bg-white rounded-xl border border-gray-100 overflow-hidden divide-y divide-gray-50">
+            {(
+              [
+                { id: 'cathay', name: '國泰 CUBE', color: '#00693e' },
+                { id: 'taishin', name: '台新 Richart', color: '#c41230' },
+                { id: 'esun', name: '玉山 Unicard', color: '#d4860a' },
+                { id: 'sinopac', name: '永豐大戶', color: '#005baa' },
+                { id: 'ctbc', name: '中信華航', color: '#b91c1c' },
+              ] as const
+            ).map(({ id, name, color }) => {
+              const isEnabled = !(settings.disabledCards ?? []).includes(id)
+              return (
+                <div key={id} className="flex items-center justify-between px-4 py-3.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+                    <span className="text-sm text-gray-700">{name}</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const cur = settings.disabledCards ?? []
+                      const next = isEnabled
+                        ? [...cur, id]
+                        : cur.filter((c) => c !== id)
+                      updateSettings({ disabledCards: next })
+                    }}
+                    className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${
+                      isEnabled ? 'bg-blue-500' : 'bg-gray-200'
+                    }`}
+                  >
+                    <span
+                      className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${
+                        isEnabled ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+              )
+            })}
+          </div>
+          <p className="text-xs text-gray-400 mt-1.5 px-1">停用的卡片不會出現在推薦結果與我的卡頁面</p>
+        </div>
 
         {/* 國泰 CUBE */}
         <div>
@@ -400,7 +446,7 @@ export default function SettingsPage() {
                 <X size={16} className="text-gray-500" />
               </button>
             </div>
-            <div className="px-5 py-5 pb-12">
+            <div className="px-5 py-5 pb-24">
               <p className="text-xs text-gray-400 mb-3">
                 哩程兌換商品或機票的估計現金等值（常見：0.4–0.8 元/哩）
               </p>

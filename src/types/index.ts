@@ -87,6 +87,7 @@ export type SinopacLevel = '大大' | '大戶' | '大戶Plus'
 export type CtbcCard = '商務御璽' | '璀璨無限' | '鼎尊無限'
 
 export interface AppSettings {
+  disabledCards: CardId[] // 停用的卡片（不顯示、不計算）
   cathayLevel: CathayLevel
   taishinLevel: TaishinLevel
   sinopacLevel: SinopacLevel

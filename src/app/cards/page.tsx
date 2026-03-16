@@ -118,7 +118,7 @@ function PlanSheet({
             <X size={16} className="text-gray-500" />
           </button>
         </div>
-        <div className="px-5 py-3 pb-12">
+        <div className="px-5 py-3 pb-24">
           {locked && lockNote && (
             <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-2.5 text-xs text-amber-600 mb-3">
               {lockNote}
@@ -194,6 +194,7 @@ export default function CardsPage() {
     )
   }
 
+  const disabled = settings.disabledCards ?? []
   const esunLocked = currentPlan.esunUpSwitch
   const sinopacCap = 1000
   const esunCap = currentPlan.esunPlan === 'UP選' ? 5000 : 1000
@@ -223,155 +224,165 @@ export default function CardsPage() {
       <div className="px-5 space-y-4 pb-4">
 
         {/* 國泰 CUBE */}
-        <div className="rounded-2xl bg-gradient-to-br from-emerald-800 to-emerald-600 p-5 text-white shadow-md">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
-                {settings.cathayLevel}
+        {!disabled.includes('cathay') && (
+          <div className="rounded-2xl bg-gradient-to-br from-emerald-800 to-emerald-600 p-5 text-white shadow-md">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
+                  {settings.cathayLevel}
+                </div>
+                <div className="text-lg font-bold">{CARD_NAMES.cathay}</div>
+                <div className="text-sm opacity-75 mt-0.5">{currentPlan.cathayPlan}</div>
               </div>
-              <div className="text-lg font-bold">{CARD_NAMES.cathay}</div>
-              <div className="text-sm opacity-75 mt-0.5">{currentPlan.cathayPlan}</div>
+              <div className="text-right">
+                <div className="text-xs opacity-60 mb-1">本月累積</div>
+                <div className="text-2xl font-bold">
+                  +{(cardTotals.cathay?.cash ?? 0).toLocaleString()}
+                </div>
+                <div className="text-xs opacity-60">元</div>
+              </div>
             </div>
-            <div className="text-right">
-              <div className="text-xs opacity-60 mb-1">本月累積</div>
-              <div className="text-2xl font-bold">
-                +{(cardTotals.cathay?.cash ?? 0).toLocaleString()}
-              </div>
-              <div className="text-xs opacity-60">元</div>
+            <div className="h-px bg-white/15 my-3.5" />
+            <div className="flex items-center justify-between">
+              <span className="text-xs opacity-70">每月可切換</span>
+              <button
+                onClick={() => setSwitchingCard('cathay')}
+                className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3 py-1.5 rounded-lg text-xs font-medium active:scale-95"
+              >
+                <RefreshCw size={12} />
+                切換方案
+              </button>
             </div>
           </div>
-          <div className="h-px bg-white/15 my-3.5" />
-          <div className="flex items-center justify-between">
-            <span className="text-xs opacity-70">每月可切換</span>
-            <button
-              onClick={() => setSwitchingCard('cathay')}
-              className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3 py-1.5 rounded-lg text-xs font-medium active:scale-95"
-            >
-              <RefreshCw size={12} />
-              切換方案
-            </button>
-          </div>
-        </div>
+        )}
 
         {/* 台新 Richart */}
-        <div className="rounded-2xl bg-gradient-to-br from-red-800 to-red-600 p-5 text-white shadow-md">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
-                {settings.taishinLevel}
+        {!disabled.includes('taishin') && (
+          <div className="rounded-2xl bg-gradient-to-br from-red-800 to-red-600 p-5 text-white shadow-md">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
+                  {settings.taishinLevel}
+                </div>
+                <div className="text-lg font-bold">{CARD_NAMES.taishin}</div>
+                <div className="text-sm opacity-75 mt-0.5">{currentPlan.taishinPlan}</div>
               </div>
-              <div className="text-lg font-bold">{CARD_NAMES.taishin}</div>
-              <div className="text-sm opacity-75 mt-0.5">{currentPlan.taishinPlan}</div>
+              <div className="text-right">
+                <div className="text-xs opacity-60 mb-1">本月累積</div>
+                <div className="text-2xl font-bold">
+                  +{(cardTotals.taishin?.cash ?? 0).toLocaleString()}
+                </div>
+                <div className="text-xs opacity-60">元</div>
+              </div>
             </div>
-            <div className="text-right">
-              <div className="text-xs opacity-60 mb-1">本月累積</div>
-              <div className="text-2xl font-bold">
-                +{(cardTotals.taishin?.cash ?? 0).toLocaleString()}
-              </div>
-              <div className="text-xs opacity-60">元</div>
+            <div className="h-px bg-white/15 my-3.5" />
+            <div className="flex items-center justify-between">
+              <span className="text-xs opacity-70">每月可切換</span>
+              <button
+                onClick={() => setSwitchingCard('taishin')}
+                className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3 py-1.5 rounded-lg text-xs font-medium active:scale-95"
+              >
+                <RefreshCw size={12} />
+                切換方案
+              </button>
             </div>
           </div>
-          <div className="h-px bg-white/15 my-3.5" />
-          <div className="flex items-center justify-between">
-            <span className="text-xs opacity-70">每月可切換</span>
-            <button
-              onClick={() => setSwitchingCard('taishin')}
-              className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3 py-1.5 rounded-lg text-xs font-medium active:scale-95"
-            >
-              <RefreshCw size={12} />
-              切換方案
-            </button>
-          </div>
-        </div>
+        )}
 
         {/* 玉山 Unicard */}
-        <div className="rounded-2xl bg-gradient-to-br from-amber-700 to-amber-500 p-5 text-white shadow-md">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
-                {currentPlan.esunPlan}
+        {!disabled.includes('esun') && (
+          <div className="rounded-2xl bg-gradient-to-br from-amber-700 to-amber-500 p-5 text-white shadow-md">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
+                  {currentPlan.esunPlan}
+                </div>
+                <div className="text-lg font-bold">{CARD_NAMES.esun}</div>
+                <div className="text-sm opacity-75 mt-0.5">月上限 {esunCap.toLocaleString()} 點</div>
               </div>
-              <div className="text-lg font-bold">{CARD_NAMES.esun}</div>
-              <div className="text-sm opacity-75 mt-0.5">月上限 {esunCap.toLocaleString()} 點</div>
+              <div className="text-right">
+                <div className="text-xs opacity-60 mb-1">已使用</div>
+                <div className="text-2xl font-bold">
+                  {(cardTotals.esun?.cash ?? 0).toLocaleString()}
+                </div>
+                <div className="text-xs opacity-60">點</div>
+              </div>
             </div>
-            <div className="text-right">
-              <div className="text-xs opacity-60 mb-1">已使用</div>
-              <div className="text-2xl font-bold">
-                {(cardTotals.esun?.cash ?? 0).toLocaleString()}
-              </div>
-              <div className="text-xs opacity-60">點</div>
+            <CapBar used={cardTotals.esun?.cash ?? 0} cap={esunCap} />
+            <div className="h-px bg-white/15 my-3.5" />
+            <div className="flex items-center justify-between">
+              {esunLocked ? (
+                <div className="flex items-center gap-1.5">
+                  <AlertTriangle size={12} className="text-amber-300" />
+                  <span className="text-xs opacity-70">本月已鎖定 UP 選</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 size={12} className="text-green-300" />
+                  <span className="text-xs opacity-70">本月可切換</span>
+                </div>
+              )}
+              <button
+                onClick={() => setSwitchingCard('esun')}
+                className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3 py-1.5 rounded-lg text-xs font-medium active:scale-95"
+              >
+                <RefreshCw size={12} />
+                切換方案
+              </button>
             </div>
           </div>
-          <CapBar used={cardTotals.esun?.cash ?? 0} cap={esunCap} />
-          <div className="h-px bg-white/15 my-3.5" />
-          <div className="flex items-center justify-between">
-            {esunLocked ? (
-              <div className="flex items-center gap-1.5">
-                <AlertTriangle size={12} className="text-amber-300" />
-                <span className="text-xs opacity-70">本月已鎖定 UP 選</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 size={12} className="text-green-300" />
-                <span className="text-xs opacity-70">本月可切換</span>
-              </div>
-            )}
-            <button
-              onClick={() => setSwitchingCard('esun')}
-              className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3 py-1.5 rounded-lg text-xs font-medium active:scale-95"
-            >
-              <RefreshCw size={12} />
-              切換方案
-            </button>
-          </div>
-        </div>
+        )}
 
         {/* 永豐大戶 */}
-        <div className="rounded-2xl bg-gradient-to-br from-blue-900 to-blue-700 p-5 text-white shadow-md">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
-                {settings.sinopacLevel}
+        {!disabled.includes('sinopac') && (
+          <div className="rounded-2xl bg-gradient-to-br from-blue-900 to-blue-700 p-5 text-white shadow-md">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
+                  {settings.sinopacLevel}
+                </div>
+                <div className="text-lg font-bold">{CARD_NAMES.sinopac}</div>
+                <div className="text-sm opacity-75 mt-0.5">全通路（自動）</div>
               </div>
-              <div className="text-lg font-bold">{CARD_NAMES.sinopac}</div>
-              <div className="text-sm opacity-75 mt-0.5">全通路（自動）</div>
-            </div>
-            <div className="text-right">
-              <div className="text-xs opacity-60 mb-1">月上限 1,000 元</div>
-              <div className="text-2xl font-bold">
-                {(cardTotals.sinopac?.cash ?? 0).toLocaleString()}
+              <div className="text-right">
+                <div className="text-xs opacity-60 mb-1">月上限 1,000 元</div>
+                <div className="text-2xl font-bold">
+                  {(cardTotals.sinopac?.cash ?? 0).toLocaleString()}
+                </div>
+                <div className="text-xs opacity-60">元已用</div>
               </div>
-              <div className="text-xs opacity-60">元已用</div>
             </div>
+            <CapBar used={cardTotals.sinopac?.cash ?? 0} cap={sinopacCap} />
+            <div className="h-px bg-white/15 my-3.5" />
+            <span className="text-xs opacity-70">無需切換方案</span>
           </div>
-          <CapBar used={cardTotals.sinopac?.cash ?? 0} cap={sinopacCap} />
-          <div className="h-px bg-white/15 my-3.5" />
-          <span className="text-xs opacity-70">無需切換方案</span>
-        </div>
+        )}
 
         {/* 中信華航 */}
-        <div className="rounded-2xl bg-gradient-to-br from-red-900 to-red-700 p-5 text-white shadow-md">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
-                {settings.ctbcCard}
+        {!disabled.includes('ctbc') && (
+          <div className="rounded-2xl bg-gradient-to-br from-red-900 to-red-700 p-5 text-white shadow-md">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
+                  {settings.ctbcCard}
+                </div>
+                <div className="text-lg font-bold">{CARD_NAMES.ctbc}</div>
+                <div className="text-sm opacity-75 mt-0.5">里程累積</div>
               </div>
-              <div className="text-lg font-bold">{CARD_NAMES.ctbc}</div>
-              <div className="text-sm opacity-75 mt-0.5">里程累積</div>
-            </div>
-            <div className="text-right">
-              <div className="text-xs opacity-60 mb-1">本月累積</div>
-              <div className="text-2xl font-bold">
-                {(cardTotals.ctbc?.miles ?? 0).toLocaleString()}
+              <div className="text-right">
+                <div className="text-xs opacity-60 mb-1">本月累積</div>
+                <div className="text-2xl font-bold">
+                  {(cardTotals.ctbc?.miles ?? 0).toLocaleString()}
+                </div>
+                <div className="text-xs opacity-60">哩</div>
               </div>
-              <div className="text-xs opacity-60">哩</div>
             </div>
+            <div className="h-px bg-white/15 my-3.5" />
+            <span className="text-xs opacity-70">
+              1 哩 ≈ NT${settings.mileValue}（里程制，不切換方案）
+            </span>
           </div>
-          <div className="h-px bg-white/15 my-3.5" />
-          <span className="text-xs opacity-70">
-            1 哩 ≈ NT${settings.mileValue}（里程制，不切換方案）
-          </span>
-        </div>
+        )}
       </div>
 
       {/* Plan switch sheets */}

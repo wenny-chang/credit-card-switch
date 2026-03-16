@@ -1,0 +1,38 @@
+{
+  "name": "刷哪張？",
+  "short_name": "刷哪張",
+  "description": "信用卡回饋追蹤與刷卡建議",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "lang": "zh-TW",
+  "categories": ["finance", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "查詢刷法",
+      "url": "/",
+      "description": "輸入金額查詢最佳信用卡"
+    },
+    {
+      "name": "新增消費",
+      "url": "/history",
+      "description": "記錄一筆消費"
+    }
+  ]
+}

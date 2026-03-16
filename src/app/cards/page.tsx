@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { RefreshCw, AlertTriangle, CheckCircle2, X } from 'lucide-react'
+import { RefreshCw, AlertTriangle, CheckCircle2, X, ChevronRight } from 'lucide-react'
+import Link from 'next/link'
 import { useAppStore } from '@/store/useAppStore'
 import { getTransactionsByMonth } from '@/lib/db'
 import type { CardId, CathayPlan, TaishinPlan, EsunPlan, Transaction } from '@/types'
@@ -203,6 +204,20 @@ export default function CardsPage() {
       <div className="px-5 pt-12 pb-4">
         <h1 className="text-2xl font-bold text-gray-900">我的信用卡</h1>
         <p className="text-sm text-gray-400 mt-0.5">{monthLabel()}回饋追蹤</p>
+        <div className="flex gap-2 mt-3">
+          <Link
+            href="/cards/plans"
+            className="flex items-center gap-1 text-xs text-blue-600 font-medium bg-blue-50 px-3 py-1.5 rounded-full"
+          >
+            方案對照表 <ChevronRight size={12} />
+          </Link>
+          <Link
+            href="/cards/perks"
+            className="flex items-center gap-1 text-xs text-blue-600 font-medium bg-blue-50 px-3 py-1.5 rounded-full"
+          >
+            卡片權益 <ChevronRight size={12} />
+          </Link>
+        </div>
       </div>
 
       <div className="px-5 space-y-4 pb-4">

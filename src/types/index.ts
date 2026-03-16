@@ -109,6 +109,7 @@ export interface CardPerk {
   name: string           // "指定停車場 8 折"
   condition: string      // "需綁定台新 Pay"
   limit: string          // "每月 10 次"
+  partners?: string[]    // 合作停車場/商家清單
   url?: string           // 申請或詳情連結
 }
 

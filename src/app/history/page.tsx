@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Plus, Search, Trash2 } from 'lucide-react'
+import { Plus, Search, Trash2, ChevronRight } from 'lucide-react'
+import Link from 'next/link'
 import { getTransactionsByMonth, deleteTransaction } from '@/lib/db'
 import type { Transaction } from '@/types'
 import { CARD_NAMES, CARD_COLORS } from '@/data/cards'
@@ -105,6 +106,12 @@ export default function HistoryPage() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">消費歷史</h1>
             <p className="text-sm text-gray-400 mt-0.5">{monthLabel()}</p>
+            <Link
+              href="/history/plans"
+              className="inline-flex items-center gap-1 text-xs text-blue-600 font-medium bg-blue-50 px-3 py-1.5 rounded-full mt-2"
+            >
+              切換歷史 <ChevronRight size={12} />
+            </Link>
           </div>
           <button
             onClick={() => setShowModal(true)}

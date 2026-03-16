@@ -125,24 +125,24 @@ export default function AddTransactionModal({
           </div>
 
           {/* Amount + Date */}
-          <div className="flex gap-4 items-end">
-            <div className="flex-1">
+          <div className="flex gap-4 items-end min-w-0">
+            <div className="flex-1 min-w-0">
               <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">
                 金額
               </label>
               <div className="flex items-baseline gap-1.5 mt-1.5 border-b border-gray-200 pb-1.5">
-                <span className="text-xs text-gray-300">NT$</span>
+                <span className="text-xs text-gray-300 flex-shrink-0">NT$</span>
                 <input
                   type="number"
                   inputMode="numeric"
                   placeholder="0"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="flex-1 text-2xl font-bold text-gray-900 bg-transparent outline-none placeholder:text-gray-200"
+                  className="min-w-0 w-full text-2xl font-bold text-gray-900 bg-transparent outline-none placeholder:text-gray-200"
                 />
               </div>
             </div>
-            <div>
+            <div className="flex-shrink-0">
               <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">
                 日期
               </label>
@@ -150,7 +150,7 @@ export default function AddTransactionModal({
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="mt-1.5 block text-sm text-gray-700 border-b border-gray-200 pb-1.5 bg-transparent outline-none"
+                className="mt-1.5 block w-[130px] text-sm text-gray-700 border-b border-gray-200 pb-1.5 bg-transparent outline-none"
               />
             </div>
           </div>
@@ -182,7 +182,7 @@ export default function AddTransactionModal({
             <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">
               使用卡片
             </label>
-            <div className="flex gap-2 mt-2 overflow-x-auto pb-1 -mx-5 px-5">
+            <div className="flex gap-2 mt-2 overflow-x-auto scrollbar-hide pb-1">
               {CARD_IDS.map((id) => (
                 <button
                   key={id}
@@ -232,7 +232,7 @@ export default function AddTransactionModal({
         </div>
 
         {/* Save button */}
-        <div className="px-5 pb-10 pt-2">
+        <div className="px-5 pb-28 pt-2">
           <button
             onClick={handleSave}
             disabled={!cardId || !parseFloat(amount) || saving}

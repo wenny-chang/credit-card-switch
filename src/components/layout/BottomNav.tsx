@@ -19,7 +19,7 @@ export function BottomNav() {
       <div className="mx-auto max-w-lg">
         <div className="flex items-center justify-around px-2 py-1">
           {navItems.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href;
+            const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
             return (
               <Link
                 key={href}

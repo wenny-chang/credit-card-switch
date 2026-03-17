@@ -8,6 +8,8 @@ import {
   ChevronDown,
   Search,
   X,
+  CreditCard,
+  Plus,
 } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
 import { calculateRewards } from '@/lib/calculator'
@@ -129,12 +131,12 @@ export default function HomePage() {
             placeholder="輸入商家名稱自動選類別…"
             value={merchantText}
             onChange={(e) => setMerchantText(e.target.value)}
-            className="w-full pl-9 pr-8 py-2.5 text-sm bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-100 placeholder:text-gray-300"
+            className="w-full pl-9 pr-8 py-2.5 text-sm bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-100 placeholder:text-gray-300 cursor-text"
           />
           {merchantText && (
             <button
               onClick={() => setMerchantText('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 cursor-pointer"
             >
               <X size={14} />
             </button>
@@ -170,7 +172,7 @@ export default function HomePage() {
               <button
                 key={cat.id}
                 onClick={() => setCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-150 ${
+                className={`px-3.5 min-h-[36px] rounded-full text-sm font-medium transition-all duration-150 cursor-pointer ${
                   category === cat.id
                     ? 'bg-blue-600 text-white shadow-sm'
                     : 'bg-gray-100 text-gray-600 active:bg-gray-200'
@@ -181,11 +183,11 @@ export default function HomePage() {
             ))}
             <button
               onClick={() => setShowAllCats((v) => !v)}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-200"
+              className="flex items-center gap-1 px-3.5 min-h-[36px] rounded-full text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-200 cursor-pointer"
             >
               <ChevronDown
                 size={13}
-                className={`transition-transform ${showAllCats ? 'rotate-180' : ''}`}
+                className={`transition-transform duration-200 ${showAllCats ? 'rotate-180' : ''}`}
               />
               {showAllCats ? '收合' : '更多'}
             </button>
@@ -196,47 +198,57 @@ export default function HomePage() {
 
       {/* Results */}
       {results.length > 0 && numAmount > 0 ? (
-        <div className="mx-5 mt-4 space-y-2.5 pb-4">
+        <div className="mx-5 mt-4 space-y-2.5 pb-6">
+
           {/* Best card banner */}
           <div
-            className="rounded-2xl p-5 text-white"
+            className="rounded-2xl p-5 text-white relative overflow-hidden"
             style={{
-              background: `linear-gradient(135deg, ${CARD_COLORS[best.cardId]}bb, ${CARD_COLORS[best.cardId]})`,
+              background: `linear-gradient(135deg, ${CARD_COLORS[best.cardId]}cc, ${CARD_COLORS[best.cardId]})`,
             }}
           >
-            <div className="flex items-start justify-between gap-3">
+            {/* Subtle shine overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+            <div className="relative flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <div className="flex items-center gap-1.5 mb-1.5">
+                <div className="flex items-center gap-1.5 mb-2">
                   <TrendingUp size={12} />
-                  <span className="text-[10px] font-bold opacity-70 uppercase tracking-widest">
+                  <span className="text-[10px] font-bold opacity-80 uppercase tracking-widest">
                     最佳選擇
                   </span>
+                  <span className="text-[10px] font-black opacity-40 ml-0.5">#1</span>
                 </div>
                 <div className="text-xl font-bold truncate">{best.cardName}</div>
-                <div className="text-sm opacity-75 mt-0.5 truncate">{best.planName}</div>
+                <div className="text-sm opacity-70 mt-0.5 truncate">{best.planName}</div>
               </div>
               <div className="text-right flex-shrink-0">
-                <div className="text-3xl font-bold">{fmtReward(best)}</div>
-                <div className="text-xs opacity-70 mt-0.5">{fmtRate(best)}</div>
+                <div className="text-3xl font-black tracking-tight">{fmtReward(best)}</div>
+                <div className="text-xs opacity-60 mt-0.5">{fmtRate(best)}</div>
               </div>
             </div>
           </div>
 
           {/* Other cards */}
-          {results.slice(1).map((r) => (
+          {results.slice(1).map((r, idx) => (
             <div
               key={r.cardId}
-              className={`bg-white rounded-xl border p-4 flex items-center justify-between gap-3 ${
-                r.isOverLimit ? 'border-amber-200' : 'border-gray-100'
+              className={`bg-white rounded-xl border p-4 flex items-center justify-between gap-3 transition-opacity ${
+                r.isOverLimit
+                  ? 'border-amber-100 opacity-60'
+                  : 'border-gray-100'
               }`}
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div
-                  className="w-1 h-10 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: CARD_COLORS[r.cardId] }}
-                />
+                {/* Rank + color bar */}
+                <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                  <span className="text-[10px] font-black text-gray-300">#{idx + 2}</span>
+                  <div
+                    className="w-1 h-8 rounded-full"
+                    style={{ backgroundColor: r.isOverLimit ? '#d1d5db' : CARD_COLORS[r.cardId] }}
+                  />
+                </div>
                 <div className="min-w-0">
-                  <div className="font-semibold text-gray-900 text-sm truncate">
+                  <div className={`font-semibold text-sm truncate ${r.isOverLimit ? 'text-gray-400' : 'text-gray-900'}`}>
                     {r.cardName}
                   </div>
                   <div className="text-xs text-gray-400 mt-0.5 truncate">{r.planName}</div>
@@ -249,13 +261,13 @@ export default function HomePage() {
                   {!r.isOverLimit && r.remainingBudget !== null && r.remainingBudget < 300 && (
                     <div className="flex items-center gap-1 mt-1 text-xs text-amber-500">
                       <AlertCircle size={10} />
-                      月上限剩 {r.remainingBudget}
+                      月上限剩 NT${r.remainingBudget}
                     </div>
                   )}
                 </div>
               </div>
               <div className="text-right flex-shrink-0">
-                <div className={`font-bold text-sm ${r.isOverLimit ? 'text-amber-500' : 'text-gray-900'}`}>
+                <div className={`font-bold text-sm ${r.isOverLimit ? 'text-gray-400' : 'text-gray-900'}`}>
                   {fmtReward(r)}
                 </div>
                 <div className="text-xs text-gray-400">{fmtRate(r)}</div>
@@ -266,15 +278,18 @@ export default function HomePage() {
           {/* Log button */}
           <button
             onClick={() => setShowModal(true)}
-            className="w-full py-3 border-2 border-dashed border-gray-200 text-gray-400 rounded-xl text-sm font-medium active:border-blue-300 active:text-blue-500 transition-all duration-150"
+            className="w-full py-3.5 bg-gray-900 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 active:bg-gray-700 transition-colors duration-150 cursor-pointer"
           >
-            + 記錄這筆消費
+            <Plus size={15} />
+            記錄這筆消費
           </button>
         </div>
       ) : (
         numAmount <= 0 && (
-          <div className="mx-5 mt-10 text-center">
-            <div className="text-5xl mb-3">💳</div>
+          <div className="mx-5 mt-12 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-50 mb-4">
+              <CreditCard size={28} className="text-gray-200" />
+            </div>
             <p className="text-gray-300 text-sm">輸入金額後查看各卡回饋比較</p>
           </div>
         )

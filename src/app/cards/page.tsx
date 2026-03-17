@@ -113,7 +113,7 @@ function PlanSheet({
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"
+            className="w-11 h-11 flex items-center justify-center rounded-full bg-gray-100 cursor-pointer"
           >
             <X size={16} className="text-gray-500" />
           </button>
@@ -137,12 +137,12 @@ function PlanSheet({
                       onClose()
                     }
                   }}
-                  className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl border transition-all ${
+                  className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl border transition-all min-h-[52px] ${
                     isCurrent
-                      ? 'bg-blue-600 border-blue-600 text-white'
+                      ? 'bg-blue-600 border-blue-600 text-white cursor-default'
                       : isDisabled
                       ? 'bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed'
-                      : 'bg-white border-gray-100 text-gray-700 active:bg-gray-50'
+                      : 'bg-white border-gray-100 text-gray-700 active:bg-gray-50 cursor-pointer'
                   }`}
                 >
                   <span className="font-medium">{plan}</span>
@@ -188,7 +188,7 @@ export default function CardsPage() {
 
   if (!settingsLoaded || !planLoaded || !currentPlan) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center pt-32">
         <div className="text-gray-300 text-sm">載入中…</div>
       </div>
     )
@@ -247,7 +247,7 @@ export default function CardsPage() {
               <span className="text-xs opacity-70">每月可切換</span>
               <button
                 onClick={() => setSwitchingCard('cathay')}
-                className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3 py-1.5 rounded-lg text-xs font-medium active:scale-95"
+                className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3.5 py-2.5 rounded-lg text-xs font-medium active:scale-95 cursor-pointer min-h-[36px]"
               >
                 <RefreshCw size={12} />
                 切換方案
@@ -280,7 +280,7 @@ export default function CardsPage() {
               <span className="text-xs opacity-70">每月可切換</span>
               <button
                 onClick={() => setSwitchingCard('taishin')}
-                className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3 py-1.5 rounded-lg text-xs font-medium active:scale-95"
+                className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3.5 py-2.5 rounded-lg text-xs font-medium active:scale-95 cursor-pointer min-h-[36px]"
               >
                 <RefreshCw size={12} />
                 切換方案
@@ -324,7 +324,7 @@ export default function CardsPage() {
               )}
               <button
                 onClick={() => setSwitchingCard('esun')}
-                className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3 py-1.5 rounded-lg text-xs font-medium active:scale-95"
+                className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3.5 py-2.5 rounded-lg text-xs font-medium active:scale-95 cursor-pointer min-h-[36px]"
               >
                 <RefreshCw size={12} />
                 切換方案

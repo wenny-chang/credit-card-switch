@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Plus, Search, Trash2, Pencil, ChevronRight, X, ClipboardList } from 'lucide-react'
+import { Plus, Search, Trash2, Pencil, ChevronRight, X, ClipboardList, List, BarChart2 } from 'lucide-react'
 import Link from 'next/link'
 import { getTransactionsByMonth, deleteTransaction } from '@/lib/db'
-import type { Transaction } from '@/types'
+import type { Transaction, CardId } from '@/types'
 import { CARD_NAMES, CARD_COLORS } from '@/data/cards'
 import AddTransactionModal from '@/components/modals/AddTransactionModal'
 
@@ -63,6 +63,7 @@ export default function HistoryPage() {
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [editingTx, setEditingTx] = useState<Transaction | null>(null)
+  const [viewMode, setViewMode] = useState<'list' | 'chart'>('list')
 
   const load = useCallback(async () => {
     const txs = await getTransactionsByMonth(currentMonth())
@@ -101,6 +102,29 @@ export default function HistoryPage() {
     .filter((tx) => tx.rewardType === '哩')
     .reduce((s, tx) => s + tx.reward, 0)
 
+  // ── 圖表資料 ──────────────────────────────────────────────
+  const categoryTotals = transactions.reduce((acc, tx) => {
+    acc[tx.category] = (acc[tx.category] ?? 0) + tx.amount
+    return acc
+  }, {} as Record<string, number>)
+  const categoryChart = Object.entries(categoryTotals).sort(([, a], [, b]) => b - a)
+  const maxCategoryAmount = categoryChart[0]?.[1] ?? 1
+
+  const cardTotalsMap = transactions.reduce((acc, tx) => {
+    if (!acc[tx.cardId]) acc[tx.cardId] = { cash: 0, miles: 0 }
+    if (tx.rewardType === '哩') acc[tx.cardId].miles += tx.reward
+    else acc[tx.cardId].cash += tx.reward
+    return acc
+  }, {} as Record<string, { cash: number; miles: number }>)
+  const cashCardChart = Object.entries(cardTotalsMap)
+    .filter(([, v]) => v.cash > 0)
+    .sort(([, a], [, b]) => b.cash - a.cash)
+  const milesCardChart = Object.entries(cardTotalsMap)
+    .filter(([, v]) => v.miles > 0)
+    .sort(([, a], [, b]) => b.miles - a.miles)
+  const maxCash = cashCardChart[0]?.[1].cash ?? 1
+  const maxMiles = milesCardChart[0]?.[1].miles ?? 1
+
   return (
     <div>
       {/* Header */}
@@ -116,12 +140,30 @@ export default function HistoryPage() {
               切換歷史 <ChevronRight size={12} />
             </Link>
           </div>
-          <button
-            onClick={() => setShowModal(true)}
-            className="w-11 h-11 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-sm active:scale-95 transition cursor-pointer"
-          >
-            <Plus size={20} />
-          </button>
+          <div className="flex items-center gap-2">
+            {transactions.length > 0 && (
+              <div className="flex items-center bg-gray-100 rounded-lg p-0.5">
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`w-8 h-8 flex items-center justify-center rounded-md transition cursor-pointer ${viewMode === 'list' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400'}`}
+                >
+                  <List size={15} />
+                </button>
+                <button
+                  onClick={() => setViewMode('chart')}
+                  className={`w-8 h-8 flex items-center justify-center rounded-md transition cursor-pointer ${viewMode === 'chart' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-400'}`}
+                >
+                  <BarChart2 size={15} />
+                </button>
+              </div>
+            )}
+            <button
+              onClick={() => setShowModal(true)}
+              className="w-11 h-11 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-sm active:scale-95 transition cursor-pointer"
+            >
+              <Plus size={20} />
+            </button>
+          </div>
         </div>
 
         {/* Summary chips */}
@@ -165,6 +207,84 @@ export default function HistoryPage() {
         </div>
       </div>
 
+      {/* Chart Mode */}
+      {viewMode === 'chart' && transactions.length > 0 && (
+        <div className="px-5 space-y-6 pb-6">
+          {/* Category spending */}
+          <div>
+            <div className="text-sm font-semibold text-gray-700 mb-3">消費類別分布</div>
+            <div className="space-y-2.5">
+              {categoryChart.map(([catId, amount]) => (
+                <div key={catId}>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-gray-600">{CATEGORY_LABELS[catId] ?? catId}</span>
+                    <span className="text-gray-900 font-medium">NT${amount.toLocaleString()}</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-blue-400 rounded-full transition-all"
+                      style={{ width: `${(amount / maxCategoryAmount) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Card cash/points rewards */}
+          {cashCardChart.length > 0 && (
+            <div>
+              <div className="text-sm font-semibold text-gray-700 mb-3">各卡回饋總計（元／點）</div>
+              <div className="space-y-2.5">
+                {cashCardChart.map(([cardId, totals]) => (
+                  <div key={cardId}>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-gray-600">{CARD_NAMES[cardId as CardId] ?? cardId}</span>
+                      <span className="text-gray-900 font-medium">+{totals.cash.toLocaleString()}</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{
+                          width: `${(totals.cash / maxCash) * 100}%`,
+                          backgroundColor: CARD_COLORS[cardId as CardId] ?? '#e5e7eb',
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Card miles rewards */}
+          {milesCardChart.length > 0 && (
+            <div>
+              <div className="text-sm font-semibold text-gray-700 mb-3">各卡回饋總計（哩）</div>
+              <div className="space-y-2.5">
+                {milesCardChart.map(([cardId, totals]) => (
+                  <div key={cardId}>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-gray-600">{CARD_NAMES[cardId as CardId] ?? cardId}</span>
+                      <span className="text-gray-900 font-medium">+{totals.miles.toLocaleString()} 哩</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{
+                          width: `${(totals.miles / maxMiles) * 100}%`,
+                          backgroundColor: CARD_COLORS[cardId as CardId] ?? '#e5e7eb',
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* List / Empty state */}
       {transactions.length === 0 ? (
         <div className="px-5 mt-16 text-center">
@@ -179,11 +299,11 @@ export default function HistoryPage() {
             新增第一筆
           </button>
         </div>
-      ) : filtered.length === 0 ? (
+      ) : viewMode === 'list' && filtered.length === 0 ? (
         <div className="px-5 mt-16 text-center">
           <p className="text-gray-300 text-sm">找不到符合的紀錄</p>
         </div>
-      ) : (
+      ) : viewMode === 'list' ? (
         <div className="px-5 space-y-5 pb-6">
           {dates.map((date) => (
             <div key={date}>
@@ -222,6 +342,11 @@ export default function HistoryPage() {
                         <div className="text-xs text-gray-400 mt-0.5">
                           {CARD_NAMES[tx.cardId]} · {tx.plan}
                         </div>
+                        {tx.note && (
+                          <div className="text-xs text-gray-400 mt-0.5 truncate">
+                            {tx.note}
+                          </div>
+                        )}
                       </div>
                       <div className="text-right flex-shrink-0">
                         <div className="text-sm font-semibold text-gray-900">
@@ -252,7 +377,7 @@ export default function HistoryPage() {
             </div>
           ))}
         </div>
-      )}
+      ) : null}
 
       {/* Add Transaction Modal */}
       {showModal && (
@@ -273,6 +398,7 @@ export default function HistoryPage() {
           initialMerchant={editingTx.merchant === '（未填）' ? '' : editingTx.merchant}
           initialCardId={editingTx.cardId}
           initialDate={editingTx.date}
+          initialNote={editingTx.note}
           initialPlan={editingTx.plan}
           initialReward={editingTx.reward}
           initialRewardType={editingTx.rewardType}

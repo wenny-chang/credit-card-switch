@@ -36,6 +36,7 @@ interface Props {
   initialReward?: number
   initialRewardType?: '點' | '元' | '哩'
   initialDate?: string
+  initialNote?: string
   transactionId?: string  // 若提供則為編輯模式（update）
   onClose: () => void
   onSaved: () => void
@@ -54,6 +55,7 @@ export default function AddTransactionModal({
   initialReward = 0,
   initialRewardType = '元',
   initialDate,
+  initialNote,
   transactionId,
   onClose,
   onSaved,
@@ -68,7 +70,7 @@ export default function AddTransactionModal({
   const [amount, setAmount] = useState(initialAmount > 0 ? String(initialAmount) : '')
   const [cardId, setCardId] = useState<CardId | undefined>(initialCardId)
   const [date, setDate] = useState(initialDate ?? new Date().toISOString().slice(0, 10))
-  const [note, setNote] = useState('')
+  const [note, setNote] = useState(initialNote ?? '')
   const [saving, setSaving] = useState(false)
   const [monthlyUsage, setMonthlyUsage] = useState<Record<string, number>>({})
 

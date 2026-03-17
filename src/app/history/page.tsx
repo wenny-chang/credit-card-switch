@@ -99,9 +99,9 @@ export default function HistoryPage() {
     .reduce((s, tx) => s + tx.reward, 0)
 
   return (
-    <div className="min-h-screen">
+    <div>
       {/* Header */}
-      <div className="px-5 pt-12 pb-4">
+      <div className="px-5 pt-8 pb-4">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">消費歷史</h1>

@@ -200,9 +200,9 @@ export default function SettingsPage() {
   ]
 
   return (
-    <div className="min-h-screen">
+    <div>
       {/* Header */}
-      <div className="px-5 pt-12 pb-6">
+      <div className="px-5 pt-8 pb-6">
         <h1 className="text-2xl font-bold text-gray-900">設定</h1>
         <p className="text-sm text-gray-400 mt-0.5">卡片等級與回饋參數</p>
       </div>

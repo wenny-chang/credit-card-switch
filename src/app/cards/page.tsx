@@ -200,9 +200,9 @@ export default function CardsPage() {
   const esunCap = currentPlan.esunPlan === 'UP選' ? 5000 : 1000
 
   return (
-    <div className="min-h-screen">
+    <div>
       {/* Header */}
-      <div className="px-5 pt-12 pb-4">
+      <div className="px-5 pt-8 pb-4">
         <h1 className="text-2xl font-bold text-gray-900">我的信用卡</h1>
         <p className="text-sm text-gray-400 mt-0.5">{monthLabel()}回饋追蹤</p>
         <div className="flex gap-2 mt-3">

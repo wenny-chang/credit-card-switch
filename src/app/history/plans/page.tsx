@@ -53,9 +53,9 @@ export default function PlanHistoryPage() {
       : history.filter((h) => h.cardId === filterCard)
 
   return (
-    <div className="min-h-screen">
+    <div>
       {/* Header */}
-      <div className="px-5 pt-12 pb-4">
+      <div className="px-5 pt-8 pb-4">
         <div className="flex items-center gap-3 mb-3">
           <Link
             href="/history"

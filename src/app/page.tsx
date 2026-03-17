@@ -106,9 +106,9 @@ export default function HomePage() {
   const visibleCats = showAllCats ? CATEGORIES : CATEGORIES.slice(0, 6)
 
   return (
-    <div className="min-h-screen">
+    <div>
       {/* Header */}
-      <div className="px-5 pt-12 pb-4">
+      <div className="px-5 pt-8 pb-4">
         <div className="flex items-center gap-1.5 mb-1">
           <Zap size={14} className="text-blue-600" fill="currentColor" />
           <span className="text-[11px] font-bold text-blue-600 tracking-widest uppercase">

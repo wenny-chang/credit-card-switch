@@ -89,6 +89,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   ctbcCard: '璀璨無限',
   mileValue: 0.55,
   resetDay: 1,
+  statementDays: {},
 }
 
 export async function getSettings(): Promise<AppSettings> {

@@ -95,6 +95,7 @@ export interface AppSettings {
   ctbcCard: CtbcCard
   mileValue: number       // 哩程換算率，預設 0.55
   resetDay: number        // 每月重置日，預設 1
+  statementDays?: Partial<Record<CardId, number>>  // 各卡結帳日 (1–28)
 }
 
 // ============================================================

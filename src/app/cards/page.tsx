@@ -32,6 +32,40 @@ const CARD_GRADIENTS: Record<CardId, string> = {
   ctbc:    'from-blue-950 to-sky-500',                            // 中信：深海軍藍 → 天藍（華航品牌色）
 }
 
+// ── 結帳日工具 ────────────────────────────────────────────────
+
+function daysUntilStatement(statementDay: number): number {
+  const today = new Date()
+  const todayDate = today.getDate()
+  const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()
+  let diff = statementDay - todayDate
+  if (diff < 0) diff += daysInMonth
+  return diff
+}
+
+function StatementChip({ day, light }: { day: number; light?: boolean }) {
+  const days = daysUntilStatement(day)
+  if (days === 0) {
+    return (
+      <span className="text-xs font-medium text-red-500 bg-red-50 px-2 py-0.5 rounded-full">
+        今日結帳
+      </span>
+    )
+  }
+  if (days <= 3) {
+    return (
+      <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+        {days} 天後結帳
+      </span>
+    )
+  }
+  return (
+    <span className={`text-xs ${light ? 'text-gray-400' : 'text-white/60'}`}>
+      結帳 {day} 日
+    </span>
+  )
+}
+
 // ── 月份工具 ─────────────────────────────────────────────────
 
 function currentMonth(): string {
@@ -255,7 +289,12 @@ export default function CardsPage() {
             </div>
             <div className="h-px bg-gray-200 my-3.5" />
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-400">每月可切換</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400">每月可切換</span>
+                {settings.statementDays?.cathay && (
+                  <StatementChip day={settings.statementDays.cathay} light />
+                )}
+              </div>
               <button
                 onClick={() => setSwitchingCard('cathay')}
                 className="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition px-3.5 py-2.5 rounded-lg text-xs font-medium active:scale-95 cursor-pointer min-h-[36px]"
@@ -288,7 +327,12 @@ export default function CardsPage() {
             </div>
             <div className="h-px bg-white/15 my-3.5" />
             <div className="flex items-center justify-between">
-              <span className="text-xs opacity-70">每月可切換</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs opacity-70">每月可切換</span>
+                {settings.statementDays?.taishin && (
+                  <StatementChip day={settings.statementDays.taishin} />
+                )}
+              </div>
               <button
                 onClick={() => setSwitchingCard('taishin')}
                 className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3.5 py-2.5 rounded-lg text-xs font-medium active:scale-95 cursor-pointer min-h-[36px]"
@@ -322,17 +366,22 @@ export default function CardsPage() {
             <CapBar used={cardTotals.esun?.cash ?? 0} cap={esunCap} light />
             <div className="h-px bg-gray-200 my-3.5" />
             <div className="flex items-center justify-between">
-              {esunLocked ? (
-                <div className="flex items-center gap-1.5">
-                  <AlertTriangle size={12} className="text-amber-500" />
-                  <span className="text-xs text-gray-400">本月已鎖定 UP 選</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 size={12} className="text-emerald-500" />
-                  <span className="text-xs text-gray-400">本月可切換</span>
-                </div>
-              )}
+              <div className="flex flex-col gap-1">
+                {esunLocked ? (
+                  <div className="flex items-center gap-1.5">
+                    <AlertTriangle size={12} className="text-amber-500" />
+                    <span className="text-xs text-gray-400">本月已鎖定 UP 選</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} className="text-emerald-500" />
+                    <span className="text-xs text-gray-400">本月可切換</span>
+                  </div>
+                )}
+                {settings.statementDays?.esun && (
+                  <StatementChip day={settings.statementDays.esun} light />
+                )}
+              </div>
               <button
                 onClick={() => setSwitchingCard('esun')}
                 className="flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 transition px-3.5 py-2.5 rounded-lg text-xs font-medium active:scale-95 cursor-pointer min-h-[36px]"
@@ -365,7 +414,12 @@ export default function CardsPage() {
             </div>
             <CapBar used={cardTotals.sinopac?.cash ?? 0} cap={sinopacCap} />
             <div className="h-px bg-white/15 my-3.5" />
-            <span className="text-xs opacity-70">無需切換方案</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs opacity-70">無需切換方案</span>
+              {settings.statementDays?.sinopac && (
+                <StatementChip day={settings.statementDays.sinopac} />
+              )}
+            </div>
           </div>
         )}
 
@@ -389,9 +443,14 @@ export default function CardsPage() {
               </div>
             </div>
             <div className="h-px bg-white/15 my-3.5" />
-            <span className="text-xs opacity-70">
-              1 哩 ≈ NT${settings.mileValue}（里程制，不切換方案）
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs opacity-70">
+                1 哩 ≈ NT${settings.mileValue}（里程制，不切換方案）
+              </span>
+              {settings.statementDays?.ctbc && (
+                <StatementChip day={settings.statementDays.ctbc} />
+              )}
+            </div>
           </div>
         )}
       </div>

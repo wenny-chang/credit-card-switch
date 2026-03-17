@@ -9,6 +9,7 @@ import type {
   TaishinLevel,
   SinopacLevel,
   CtbcCard,
+  CardId,
 } from '@/types'
 
 // ── Select Bottom Sheet ───────────────────────────────────────
@@ -135,9 +136,11 @@ type ActiveField =
   | null
 
 export default function SettingsPage() {
-  const { settings, settingsLoaded, loadSettings, updateSettings } = useAppStore()
+  const { settings, settingsLoaded, loadSettings, updateSettings, updateSinopacLevel, updateCtbcCard } = useAppStore()
   const [activeField, setActiveField] = useState<ActiveField>(null)
   const [mileInput, setMileInput] = useState('')
+  const [statementDayCard, setStatementDayCard] = useState<CardId | null>(null)
+  const [statementDayInput, setStatementDayInput] = useState('')
 
   useEffect(() => {
     loadSettings()
@@ -274,6 +277,12 @@ export default function SettingsPage() {
               label="一般消費回饋率"
               value="0.3%"
             />
+            <SettingRow
+              label="結帳日"
+              value={settings.statementDays?.cathay ? `${settings.statementDays.cathay} 日` : '未設定'}
+              editable
+              onClick={() => { setStatementDayCard('cathay'); setStatementDayInput(String(settings.statementDays?.cathay ?? '')) }}
+            />
           </div>
         </div>
 
@@ -294,6 +303,12 @@ export default function SettingsPage() {
               label="一般消費回饋率"
               value="0.3%"
             />
+            <SettingRow
+              label="結帳日"
+              value={settings.statementDays?.taishin ? `${settings.statementDays.taishin} 日` : '未設定'}
+              editable
+              onClick={() => { setStatementDayCard('taishin'); setStatementDayInput(String(settings.statementDays?.taishin ?? '')) }}
+            />
           </div>
         </div>
 
@@ -311,6 +326,12 @@ export default function SettingsPage() {
             <SettingRow
               label="UP 選月上限"
               value="5,000 點"
+            />
+            <SettingRow
+              label="結帳日"
+              value={settings.statementDays?.esun ? `${settings.statementDays.esun} 日` : '未設定'}
+              editable
+              onClick={() => { setStatementDayCard('esun'); setStatementDayInput(String(settings.statementDays?.esun ?? '')) }}
             />
           </div>
         </div>
@@ -331,6 +352,12 @@ export default function SettingsPage() {
             <SettingRow
               label="月回饋上限"
               value="NT$1,000"
+            />
+            <SettingRow
+              label="結帳日"
+              value={settings.statementDays?.sinopac ? `${settings.statementDays.sinopac} 日` : '未設定'}
+              editable
+              onClick={() => { setStatementDayCard('sinopac'); setStatementDayInput(String(settings.statementDays?.sinopac ?? '')) }}
             />
           </div>
         </div>
@@ -360,6 +387,12 @@ export default function SettingsPage() {
                 <ChevronRight size={14} className="text-gray-300" />
               </div>
             </button>
+            <SettingRow
+              label="結帳日"
+              value={settings.statementDays?.ctbc ? `${settings.statementDays.ctbc} 日` : '未設定'}
+              editable
+              onClick={() => { setStatementDayCard('ctbc'); setStatementDayInput(String(settings.statementDays?.ctbc ?? '')) }}
+            />
           </div>
         </div>
 
@@ -416,7 +449,7 @@ export default function SettingsPage() {
           title="永豐大戶等級"
           current={settings.sinopacLevel}
           options={SINOPAC_LEVEL_OPTIONS}
-          onSelect={(v) => updateSettings({ sinopacLevel: v, sinopacExpectedLevel: v })}
+          onSelect={(v) => updateSinopacLevel(v)}
           onClose={() => setActiveField(null)}
         />
       )}
@@ -425,7 +458,7 @@ export default function SettingsPage() {
           title="中信華航卡等"
           current={settings.ctbcCard}
           options={CTBC_CARD_OPTIONS}
-          onSelect={(v) => updateSettings({ ctbcCard: v })}
+          onSelect={(v) => updateCtbcCard(v)}
           onClose={() => setActiveField(null)}
         />
       )}
@@ -474,6 +507,69 @@ export default function SettingsPage() {
               >
                 儲存
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {statementDayCard && (
+        <div className="fixed inset-0 z-50 flex flex-col justify-end">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+            onClick={() => setStatementDayCard(null)}
+          />
+          <div className="relative bg-white rounded-t-3xl shadow-2xl">
+            <div className="flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 bg-gray-200 rounded-full" />
+            </div>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
+              <div className="text-base font-bold text-gray-900">結帳日</div>
+              <button
+                onClick={() => setStatementDayCard(null)}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"
+              >
+                <X size={16} className="text-gray-500" />
+              </button>
+            </div>
+            <div className="px-5 py-5 pb-24">
+              <p className="text-xs text-gray-400 mb-3">每月帳單截止日（1–28 日）</p>
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-gray-500">每月</span>
+                <input
+                  type="number"
+                  min="1"
+                  max="28"
+                  inputMode="numeric"
+                  value={statementDayInput}
+                  onChange={(e) => setStatementDayInput(e.target.value)}
+                  className="w-20 text-2xl font-bold text-gray-900 border-b-2 border-blue-500 outline-none text-center bg-transparent pb-1"
+                />
+                <span className="text-sm text-gray-500">日</span>
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    const next = { ...(settings.statementDays ?? {}) }
+                    delete next[statementDayCard]
+                    updateSettings({ statementDays: next })
+                    setStatementDayCard(null)
+                  }}
+                  className="flex-1 py-3.5 border border-gray-200 text-gray-500 font-medium rounded-xl text-sm active:bg-gray-50 transition"
+                >
+                  清除
+                </button>
+                <button
+                  onClick={() => {
+                    const v = parseInt(statementDayInput)
+                    if (v >= 1 && v <= 28) {
+                      updateSettings({ statementDays: { ...(settings.statementDays ?? {}), [statementDayCard]: v } })
+                    }
+                    setStatementDayCard(null)
+                  }}
+                  className="flex-1 py-3.5 bg-blue-600 text-white font-semibold rounded-xl text-sm active:bg-blue-700 transition"
+                >
+                  儲存
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -35,6 +35,8 @@ interface Props {
   initialPlan?: string
   initialReward?: number
   initialRewardType?: '點' | '元' | '哩'
+  initialDate?: string
+  transactionId?: string  // 若提供則為編輯模式（update）
   onClose: () => void
   onSaved: () => void
 }
@@ -51,6 +53,8 @@ export default function AddTransactionModal({
   initialPlan = '',
   initialReward = 0,
   initialRewardType = '元',
+  initialDate,
+  transactionId,
   onClose,
   onSaved,
 }: Props) {
@@ -63,7 +67,7 @@ export default function AddTransactionModal({
   const [category, setCategory] = useState<CategoryId>(initialCategory)
   const [amount, setAmount] = useState(initialAmount > 0 ? String(initialAmount) : '')
   const [cardId, setCardId] = useState<CardId | undefined>(initialCardId)
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
+  const [date, setDate] = useState(initialDate ?? new Date().toISOString().slice(0, 10))
   const [note, setNote] = useState('')
   const [saving, setSaving] = useState(false)
   const [monthlyUsage, setMonthlyUsage] = useState<Record<string, number>>({})
@@ -93,7 +97,7 @@ export default function AddTransactionModal({
 
     setSaving(true)
     const tx: Transaction = {
-      id: makeId(),
+      id: transactionId ?? makeId(),
       date,
       merchant: merchant.trim() || '（未填）',
       category,
@@ -126,7 +130,7 @@ export default function AddTransactionModal({
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-          <h2 className="text-base font-bold text-gray-900">記錄消費</h2>
+          <h2 className="text-base font-bold text-gray-900">{transactionId ? '編輯消費' : '記錄消費'}</h2>
           <button
             onClick={onClose}
             className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"

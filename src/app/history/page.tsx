@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Plus, Search, Trash2, ChevronRight } from 'lucide-react'
+import { Plus, Search, Trash2, Pencil, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { getTransactionsByMonth, deleteTransaction } from '@/lib/db'
 import type { Transaction } from '@/types'
@@ -62,6 +62,7 @@ export default function HistoryPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
+  const [editingTx, setEditingTx] = useState<Transaction | null>(null)
 
   const load = useCallback(async () => {
     const txs = await getTransactionsByMonth(currentMonth())
@@ -216,12 +217,20 @@ export default function HistoryPage() {
                         +{tx.reward.toLocaleString()} {tx.rewardType}
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleDelete(tx.id)}
-                      className="ml-1 w-7 h-7 flex items-center justify-center rounded-full text-gray-300 active:text-red-400 active:bg-red-50 transition flex-shrink-0"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                    <div className="flex gap-1 flex-shrink-0">
+                      <button
+                        onClick={() => setEditingTx(tx)}
+                        className="w-7 h-7 flex items-center justify-center rounded-full text-gray-300 active:text-blue-500 active:bg-blue-50 transition"
+                      >
+                        <Pencil size={13} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(tx.id)}
+                        className="w-7 h-7 flex items-center justify-center rounded-full text-gray-300 active:text-red-400 active:bg-red-50 transition"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -236,10 +245,24 @@ export default function HistoryPage() {
           initialAmount={0}
           initialCategory="dining"
           onClose={() => setShowModal(false)}
-          onSaved={() => {
-            setShowModal(false)
-            load()
-          }}
+          onSaved={() => { setShowModal(false); load() }}
+        />
+      )}
+
+      {/* Edit Transaction Modal */}
+      {editingTx && (
+        <AddTransactionModal
+          transactionId={editingTx.id}
+          initialAmount={editingTx.amount}
+          initialCategory={editingTx.category}
+          initialMerchant={editingTx.merchant === '（未填）' ? '' : editingTx.merchant}
+          initialCardId={editingTx.cardId}
+          initialDate={editingTx.date}
+          initialPlan={editingTx.plan}
+          initialReward={editingTx.reward}
+          initialRewardType={editingTx.rewardType}
+          onClose={() => setEditingTx(null)}
+          onSaved={() => { setEditingTx(null); load() }}
         />
       )}
     </div>

@@ -21,6 +21,17 @@ const CARD_NAMES: Record<CardId, string> = {
   ctbc: '中信華航',
 }
 
+// 各卡漸層：from → to（bg-gradient-to-br）— 參考官方卡面設計
+// light 系列（白卡）: 淡底 + 品牌色漸層，搭配深色文字
+// dark  系列（黑卡）: 深底漸層，搭配白色文字
+const CARD_GRADIENTS: Record<CardId, string> = {
+  cathay:  'from-white to-emerald-50 border border-emerald-100',  // CUBE 白卡：白 → 淡翠綠
+  taishin: 'from-zinc-950 to-neutral-900',                        // 黑狗卡 黑卡：近黑 → 深灰
+  esun:    'from-white to-violet-50 border border-violet-100',    // Unicard 白卡：白 → 淡紫
+  sinopac: 'from-zinc-950 to-zinc-700',                           // 永豐：近黑 → 深灰（大戶黑卡）
+  ctbc:    'from-blue-950 to-sky-500',                            // 中信：深海軍藍 → 天藍（華航品牌色）
+}
+
 // ── 月份工具 ─────────────────────────────────────────────────
 
 function currentMonth(): string {
@@ -54,18 +65,18 @@ function computeTotals(txs: Transaction[]): Record<string, CardTotals> {
 
 // ── 月上限進度條 ─────────────────────────────────────────────
 
-function CapBar({ used, cap }: { used: number; cap: number }) {
+function CapBar({ used, cap, light }: { used: number; cap: number; light?: boolean }) {
   const pct = Math.min((used / cap) * 100, 100)
   const color = pct >= 90 ? 'bg-red-400' : pct >= 70 ? 'bg-amber-400' : 'bg-emerald-400'
   return (
     <div className="mt-3">
-      <div className="flex justify-between text-xs text-white/70 mb-1.5">
+      <div className={`flex justify-between text-xs mb-1.5 ${light ? 'text-gray-400' : 'text-white/70'}`}>
         <span>月回饋已用</span>
         <span>
           {used.toLocaleString()} / {cap.toLocaleString()} 元
         </span>
       </div>
-      <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
+      <div className={`h-1.5 rounded-full overflow-hidden ${light ? 'bg-gray-200' : 'bg-white/20'}`}>
         <div
           className={`h-full rounded-full transition-all ${color}`}
           style={{ width: `${pct}%` }}
@@ -223,31 +234,31 @@ export default function CardsPage() {
 
       <div className="px-5 space-y-4 pb-4">
 
-        {/* 國泰 CUBE */}
+        {/* 國泰 CUBE — 白卡 */}
         {!disabled.includes('cathay') && (
-          <div className="rounded-2xl bg-gradient-to-br from-emerald-800 to-emerald-600 p-5 text-white shadow-md">
+          <div className={`rounded-2xl bg-gradient-to-br ${CARD_GRADIENTS.cathay} p-5 shadow-md`}>
             <div className="flex items-start justify-between">
               <div>
-                <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
+                <div className="text-[11px] font-semibold text-emerald-600/70 tracking-widest uppercase mb-1">
                   {settings.cathayLevel}
                 </div>
-                <div className="text-lg font-bold">{CARD_NAMES.cathay}</div>
-                <div className="text-sm opacity-75 mt-0.5">{currentPlan.cathayPlan}</div>
+                <div className="text-lg font-bold text-gray-900">{CARD_NAMES.cathay}</div>
+                <div className="text-sm text-gray-500 mt-0.5">{currentPlan.cathayPlan}</div>
               </div>
               <div className="text-right">
-                <div className="text-xs opacity-60 mb-1">本月累積</div>
-                <div className="text-2xl font-bold">
+                <div className="text-xs text-gray-400 mb-1">本月累積</div>
+                <div className="text-2xl font-bold text-gray-900">
                   +{(cardTotals.cathay?.cash ?? 0).toLocaleString()}
                 </div>
-                <div className="text-xs opacity-60">元</div>
+                <div className="text-xs text-gray-400">元</div>
               </div>
             </div>
-            <div className="h-px bg-white/15 my-3.5" />
+            <div className="h-px bg-gray-200 my-3.5" />
             <div className="flex items-center justify-between">
-              <span className="text-xs opacity-70">每月可切換</span>
+              <span className="text-xs text-gray-400">每月可切換</span>
               <button
                 onClick={() => setSwitchingCard('cathay')}
-                className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3.5 py-2.5 rounded-lg text-xs font-medium active:scale-95 cursor-pointer min-h-[36px]"
+                className="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition px-3.5 py-2.5 rounded-lg text-xs font-medium active:scale-95 cursor-pointer min-h-[36px]"
               >
                 <RefreshCw size={12} />
                 切換方案
@@ -256,9 +267,9 @@ export default function CardsPage() {
           </div>
         )}
 
-        {/* 台新 Richart */}
+        {/* 台新 Richart — 黑狗卡 黑卡 */}
         {!disabled.includes('taishin') && (
-          <div className="rounded-2xl bg-gradient-to-br from-red-800 to-red-600 p-5 text-white shadow-md">
+          <div className={`rounded-2xl bg-gradient-to-br ${CARD_GRADIENTS.taishin} p-5 text-white shadow-md`}>
             <div className="flex items-start justify-between">
               <div>
                 <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
@@ -289,42 +300,42 @@ export default function CardsPage() {
           </div>
         )}
 
-        {/* 玉山 Unicard */}
+        {/* 玉山 Unicard — 白卡 */}
         {!disabled.includes('esun') && (
-          <div className="rounded-2xl bg-gradient-to-br from-amber-700 to-amber-500 p-5 text-white shadow-md">
+          <div className={`rounded-2xl bg-gradient-to-br ${CARD_GRADIENTS.esun} p-5 shadow-md`}>
             <div className="flex items-start justify-between">
               <div>
-                <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
+                <div className="text-[11px] font-semibold text-violet-600/70 tracking-widest uppercase mb-1">
                   {currentPlan.esunPlan}
                 </div>
-                <div className="text-lg font-bold">{CARD_NAMES.esun}</div>
-                <div className="text-sm opacity-75 mt-0.5">月上限 {esunCap.toLocaleString()} 點</div>
+                <div className="text-lg font-bold text-gray-900">{CARD_NAMES.esun}</div>
+                <div className="text-sm text-gray-500 mt-0.5">月上限 {esunCap.toLocaleString()} 點</div>
               </div>
               <div className="text-right">
-                <div className="text-xs opacity-60 mb-1">已使用</div>
-                <div className="text-2xl font-bold">
+                <div className="text-xs text-gray-400 mb-1">已使用</div>
+                <div className="text-2xl font-bold text-gray-900">
                   {(cardTotals.esun?.cash ?? 0).toLocaleString()}
                 </div>
-                <div className="text-xs opacity-60">點</div>
+                <div className="text-xs text-gray-400">點</div>
               </div>
             </div>
-            <CapBar used={cardTotals.esun?.cash ?? 0} cap={esunCap} />
-            <div className="h-px bg-white/15 my-3.5" />
+            <CapBar used={cardTotals.esun?.cash ?? 0} cap={esunCap} light />
+            <div className="h-px bg-gray-200 my-3.5" />
             <div className="flex items-center justify-between">
               {esunLocked ? (
                 <div className="flex items-center gap-1.5">
-                  <AlertTriangle size={12} className="text-amber-300" />
-                  <span className="text-xs opacity-70">本月已鎖定 UP 選</span>
+                  <AlertTriangle size={12} className="text-amber-500" />
+                  <span className="text-xs text-gray-400">本月已鎖定 UP 選</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5">
-                  <CheckCircle2 size={12} className="text-green-300" />
-                  <span className="text-xs opacity-70">本月可切換</span>
+                  <CheckCircle2 size={12} className="text-emerald-500" />
+                  <span className="text-xs text-gray-400">本月可切換</span>
                 </div>
               )}
               <button
                 onClick={() => setSwitchingCard('esun')}
-                className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 transition px-3.5 py-2.5 rounded-lg text-xs font-medium active:scale-95 cursor-pointer min-h-[36px]"
+                className="flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 transition px-3.5 py-2.5 rounded-lg text-xs font-medium active:scale-95 cursor-pointer min-h-[36px]"
               >
                 <RefreshCw size={12} />
                 切換方案
@@ -335,7 +346,7 @@ export default function CardsPage() {
 
         {/* 永豐大戶 */}
         {!disabled.includes('sinopac') && (
-          <div className="rounded-2xl bg-gradient-to-br from-blue-900 to-blue-700 p-5 text-white shadow-md">
+          <div className={`rounded-2xl bg-gradient-to-br ${CARD_GRADIENTS.sinopac} p-5 text-white shadow-md`}>
             <div className="flex items-start justify-between">
               <div>
                 <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">
@@ -360,7 +371,7 @@ export default function CardsPage() {
 
         {/* 中信華航 */}
         {!disabled.includes('ctbc') && (
-          <div className="rounded-2xl bg-gradient-to-br from-red-900 to-red-700 p-5 text-white shadow-md">
+          <div className={`rounded-2xl bg-gradient-to-br ${CARD_GRADIENTS.ctbc} p-5 text-white shadow-md`}>
             <div className="flex items-start justify-between">
               <div>
                 <div className="text-[11px] font-semibold opacity-60 tracking-widest uppercase mb-1">

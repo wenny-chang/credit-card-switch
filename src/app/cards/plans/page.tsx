@@ -9,9 +9,9 @@ import type { CardId } from '@/types'
 // ── Tab 設定（永豐/中信不切換，不顯示）──────────────────────
 
 const TABS: { cardId: CardId; label: string; color: string }[] = [
-  { cardId: 'cathay', label: '國泰 CUBE', color: '#00693e' },
-  { cardId: 'taishin', label: '台新 Richart', color: '#c41230' },
-  { cardId: 'esun', label: '玉山 Unicard', color: '#d4860a' },
+  { cardId: 'cathay', label: '國泰 CUBE', color: '#047857' },
+  { cardId: 'taishin', label: '台新 Richart', color: '#18181b' },
+  { cardId: 'esun', label: '玉山 Unicard', color: '#7c3aed' },
 ]
 
 // ── 方案卡片 ─────────────────────────────────────────────────

@@ -199,15 +199,23 @@ export default function HistoryPage() {
                       className="w-1 flex-shrink-0"
                       style={{ backgroundColor: CARD_COLORS[tx.cardId] ?? '#e5e7eb' }}
                     />
-                    <div className="flex-1 flex items-center gap-3 px-4 py-3.5 min-w-0">
+                    <div className="flex-1 flex items-center gap-2 px-3 py-2.5 min-w-0">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-gray-900 text-sm truncate">
-                            {tx.merchant}
-                          </span>
-                          <span className="text-[11px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-md flex-shrink-0">
-                            {CATEGORY_LABELS[tx.category] ?? tx.category}
-                          </span>
+                        <div className="flex items-center gap-1.5">
+                          {tx.merchant !== '（未填）' ? (
+                            <>
+                              <span className="font-semibold text-gray-900 text-sm truncate">
+                                {tx.merchant}
+                              </span>
+                              <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded flex-shrink-0">
+                                {CATEGORY_LABELS[tx.category] ?? tx.category}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-sm text-gray-400 truncate">
+                              {CATEGORY_LABELS[tx.category] ?? tx.category}
+                            </span>
+                          )}
                         </div>
                         <div className="text-xs text-gray-400 mt-0.5">
                           {CARD_NAMES[tx.cardId]} · {tx.plan}
@@ -221,18 +229,18 @@ export default function HistoryPage() {
                           +{tx.reward.toLocaleString()} {tx.rewardType}
                         </div>
                       </div>
-                      <div className="flex flex-col gap-0.5 flex-shrink-0">
+                      <div className="flex flex-row gap-0 flex-shrink-0">
                         <button
                           onClick={() => setEditingTx(tx)}
-                          className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-300 active:text-blue-500 active:bg-blue-50 transition cursor-pointer"
+                          className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 active:text-blue-500 active:bg-blue-50 transition cursor-pointer"
                         >
-                          <Pencil size={14} />
+                          <Pencil size={13} />
                         </button>
                         <button
                           onClick={() => handleDelete(tx.id)}
-                          className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-300 active:text-red-400 active:bg-red-50 transition cursor-pointer"
+                          className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 active:text-red-400 active:bg-red-50 transition cursor-pointer"
                         >
-                          <Trash2 size={14} />
+                          <Trash2 size={13} />
                         </button>
                       </div>
                     </div>

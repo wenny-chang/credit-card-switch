@@ -19,11 +19,11 @@ const PERK_TYPE_TABS: { type: PerkType; label: string }[] = [
 // ── 卡片顏色 / 名稱 ──────────────────────────────────────────
 
 const CARD_COLORS: Record<CardId, string> = {
-  cathay: '#00693e',
-  taishin: '#c41230',
-  esun: '#d4860a',
-  sinopac: '#005baa',
-  ctbc: '#b91c1c',
+  cathay:  '#047857',  // emerald-700 — CUBE 品牌翠綠
+  taishin: '#18181b',  // zinc-950 — 黑狗卡黑
+  esun:    '#7c3aed',  // violet-600 — Unicard 品牌紫
+  sinopac: '#3f3f46',  // zinc-700 — 永豐大戶黑
+  ctbc:    '#1e40af',  // blue-800 — 華航深藍
 }
 
 const CARD_NAMES: Record<CardId, string> = {

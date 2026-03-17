@@ -216,9 +216,9 @@ export default function SettingsPage() {
           <div className="bg-white rounded-xl border border-gray-100 overflow-hidden divide-y divide-gray-50">
             {(
               [
-                { id: 'cathay', name: '國泰 CUBE', color: '#00693e' },
-                { id: 'taishin', name: '台新 Richart', color: '#c41230' },
-                { id: 'esun', name: '玉山 Unicard', color: '#d4860a' },
+                { id: 'cathay', name: '國泰 CUBE', color: '#047857' },
+                { id: 'taishin', name: '台新 Richart', color: '#18181b' },
+                { id: 'esun', name: '玉山 Unicard', color: '#7c3aed' },
                 { id: 'sinopac', name: '永豐大戶', color: '#005baa' },
                 { id: 'ctbc', name: '中信華航', color: '#b91c1c' },
               ] as const

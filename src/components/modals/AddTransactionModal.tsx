@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { X, Check } from 'lucide-react'
-import { addTransaction } from '@/lib/db'
+import { addTransaction, getMonthlyRewardByCard } from '@/lib/db'
 import type { CategoryId, CardId, Transaction } from '@/types'
 import { CARD_NAMES, CARD_COLORS } from '@/data/cards'
 import { useAppStore } from '@/store/useAppStore'
+import { calculateRewards } from '@/lib/calculator'
 
 const CATEGORIES: { id: CategoryId; label: string }[] = [
   { id: 'dining', label: '餐飲' },
@@ -53,7 +54,7 @@ export default function AddTransactionModal({
   onClose,
   onSaved,
 }: Props) {
-  const { settings } = useAppStore()
+  const { settings, currentPlan } = useAppStore()
   const enabledCardIds = CARD_IDS.filter(
     (id) => !(settings.disabledCards ?? []).includes(id)
   )
@@ -65,6 +66,25 @@ export default function AddTransactionModal({
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
   const [note, setNote] = useState('')
   const [saving, setSaving] = useState(false)
+  const [monthlyUsage, setMonthlyUsage] = useState<Record<string, number>>({})
+
+  useEffect(() => {
+    const month = new Date().toISOString().slice(0, 7)
+    getMonthlyRewardByCard(month).then(setMonthlyUsage)
+  }, [])
+
+  const rewardResult = useMemo(() => {
+    const num = parseFloat(amount)
+    if (!cardId || !num || num <= 0 || !currentPlan) return null
+    const results = calculateRewards({
+      amount: num,
+      category,
+      settings,
+      currentPlan,
+      monthlyUsage,
+    })
+    return results.find((r) => r.cardId === cardId) ?? null
+  }, [cardId, amount, category, settings, currentPlan, monthlyUsage])
 
   async function handleSave() {
     if (!cardId) return
@@ -79,9 +99,9 @@ export default function AddTransactionModal({
       category,
       amount: num,
       cardId,
-      plan: initialPlan,
-      reward: initialReward,
-      rewardType: initialRewardType,
+      plan: rewardResult?.planName ?? initialPlan,
+      reward: rewardResult?.reward ?? initialReward,
+      rewardType: rewardResult?.rewardType ?? initialRewardType,
       note: note.trim() || undefined,
     }
     await addTransaction(tx)
@@ -208,14 +228,14 @@ export default function AddTransactionModal({
           </div>
 
           {/* Reward preview */}
-          {initialReward > 0 && (
+          {rewardResult && rewardResult.reward > 0 && (
             <div className="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 flex justify-between items-center">
               <span className="text-sm text-emerald-700">預計回饋</span>
               <span className="text-sm font-bold text-emerald-700">
-                +{initialReward.toLocaleString()} {initialRewardType}
-                {initialPlan && (
+                +{rewardResult.reward.toLocaleString()} {rewardResult.rewardType}
+                {rewardResult.planName && (
                   <span className="font-normal text-emerald-500 ml-1.5">
-                    （{initialPlan}）
+                    ({rewardResult.planName})
                   </span>
                 )}
               </span>

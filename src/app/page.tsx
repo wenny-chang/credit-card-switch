@@ -192,14 +192,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 查詢按鈕（明確操作提示） */}
-        <button
-          onClick={runCalc}
-          disabled={!amount || numAmount <= 0}
-          className="w-full py-3.5 bg-blue-600 text-white font-semibold rounded-xl disabled:opacity-30 disabled:cursor-not-allowed active:bg-blue-700 active:scale-[0.98] transition-all duration-150 text-sm"
-        >
-          查詢最佳刷法
-        </button>
       </div>
 
       {/* Results */}

@@ -89,7 +89,9 @@ export default function HistoryPage() {
     )
   })
 
-  const grouped = groupByDate(filtered)
+  // id 格式為 `${Date.now()}-xxx`，降序即最新在最前
+  const sorted = [...filtered].sort((a, b) => b.id.localeCompare(a.id))
+  const grouped = groupByDate(sorted)
   const dates = Object.keys(grouped).sort((a, b) => b.localeCompare(a))
 
   const totalCash = transactions

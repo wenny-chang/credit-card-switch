@@ -238,13 +238,15 @@ export default function SettingsPage() {
                         : cur.filter((c) => c !== id)
                       updateSettings({ disabledCards: next })
                     }}
-                    className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${
+                    className={`relative flex-shrink-0 w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none ${
                       isEnabled ? 'bg-blue-500' : 'bg-gray-200'
                     }`}
+                    role="switch"
+                    aria-checked={isEnabled}
                   >
                     <span
-                      className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${
-                        isEnabled ? 'translate-x-6' : 'translate-x-1'
+                      className={`absolute top-[3px] left-[3px] w-[18px] h-[18px] bg-white rounded-full shadow-md transition-transform duration-200 ${
+                        isEnabled ? 'translate-x-[18px]' : 'translate-x-0'
                       }`}
                     />
                   </button>

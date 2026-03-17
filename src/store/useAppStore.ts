@@ -9,6 +9,7 @@ import type {
   TaishinPlan,
   EsunPlan,
   SinopacLevel,
+  CtbcCard,
 } from '@/types'
 import {
   getSettings,
@@ -49,6 +50,7 @@ interface AppStore {
   updateTaishinPlan: (plan: TaishinPlan) => Promise<void>
   updateEsunPlan: (plan: EsunPlan) => Promise<void>
   updateSinopacLevel: (level: SinopacLevel) => Promise<void>
+  updateCtbcCard: (card: CtbcCard) => Promise<void>
 
   // ── 搜尋狀態（純記憶體）──
   search: SearchState
@@ -185,7 +187,7 @@ export const useAppStore = create<AppStore>()((set, get) => ({
     const current = get().settings
     const prev = current.sinopacLevel
     if (prev === level) return
-    await get().updateSettings({ sinopacLevel: level })
+    await get().updateSettings({ sinopacLevel: level, sinopacExpectedLevel: level })
     await addPlanHistory({
       id: makeId(),
       timestamp: new Date().toISOString(),
@@ -193,6 +195,22 @@ export const useAppStore = create<AppStore>()((set, get) => ({
       changeType: 'level',
       fromValue: prev,
       toValue: level,
+      isAutomatic: false,
+    })
+  },
+
+  updateCtbcCard: async (card) => {
+    const current = get().settings
+    const prev = current.ctbcCard
+    if (prev === card) return
+    await get().updateSettings({ ctbcCard: card })
+    await addPlanHistory({
+      id: makeId(),
+      timestamp: new Date().toISOString(),
+      cardId: 'ctbc',
+      changeType: 'level',
+      fromValue: prev,
+      toValue: card,
       isAutomatic: false,
     })
   },
